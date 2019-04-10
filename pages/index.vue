@@ -1,65 +1,54 @@
 <template>
-  <section class="container">
-    <div>
-      <app-logo/>
-      <h1 class="title">
-        vue-book
-      </h1>
-      <h2 class="subtitle">
-        Nuxt.js project
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green">Documentation</a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey">GitHub</a>
-      </div>
-    </div>
-  </section>
+  <main>
+    <span>{{ file.name }}</span>
+    <form
+      @submit.prevent="onFileSubmit"
+      action=""
+      method="post"
+      enctype="multipart/form-data">
+      <input
+        ref="file"
+        type="file"
+        @change="onFileChange">
+      <input type="submit">
+    </form>
+
+    <img
+      v-for="(image, index) in images"
+      :key="index"
+      :src="image"
+      alt="nop">
+  </main>
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
-
+import { mapState } from 'vuex'
 export default {
-  components: {
-    AppLogo
+  data () {
+    return {
+      file: {}
+    }
+  },
+  computed: {
+    ...mapState({
+      images: state => state.data.images
+    })
+  },
+  methods: {
+    onFileChange () {
+      this.file = this.$refs.file.files[0]
+    },
+    onFileSubmit () {
+      let formData = new FormData()
+      formData.append('file', this.file)
+      fetch('/api/image', {
+        method: 'POST',
+        body: formData
+      })
+        .then(() => {
+          this.$store.dispatch('data/ADD_IMAGE', this.file.name)
+        })
+    }
   }
 }
 </script>
-
-<style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
-
