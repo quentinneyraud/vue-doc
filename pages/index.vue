@@ -18,12 +18,19 @@
       :key="index"
       :src="image"
       alt="nop">
+
+    <canvas-editor />
   </main>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import CanvasEditor from 'components/CanvasEditor'
+
 export default {
+  components: {
+    CanvasEditor
+  },
   data () {
     return {
       file: {}
